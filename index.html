@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Library Assistance Agent - Smart Academic Book Recommender</title>
+  <meta name="description" content="AI Library Assistance Agent retrieves, filters, compares, and recommends optimal academic books based on subject, difficulty, and learning purpose.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="container header-content">
+      <div class="header-title-group">
+        <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.2rem;">
+          <span class="header-tag-badge">Academic Prototype</span>
+        </div>
+        <h1>
+          <span>📖</span> AI Library Assistance Agent
+        </h1>
+        <p>
+          An intelligent recommendation system that retrieves, filters, compares, and matches academic books tailored to your syllabus, difficulty level, and study goals.
+        </p>
+      </div>
+
+      <div class="header-stats">
+        <div class="stat-item">
+          <span class="stat-num" id="stat-catalogue-count">24</span>
+          <span class="stat-label">Catalogue Books</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">6</span>
+          <span class="stat-label">Core Domains</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">4</span>
+          <span class="stat-label">AI Pillars</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content container">
+
+    <!-- Search Form Panel -->
+    <section class="card-panel search-panel" id="search-section" aria-labelledby="form-heading">
+      <h2 class="section-title" id="form-heading">
+        <span>🎯</span> Student Learning Profile & Preferences
+      </h2>
+      <p class="section-subtitle">
+        Enter your target subject, preferred difficulty level, and primary learning purpose to receive curated textbook recommendations.
+      </p>
+
+      <!-- Quick Test Presets Banner for instant testing -->
+      <div class="presets-banner" aria-label="Quick Evaluation Scenarios">
+        <div class="presets-label">
+          <span>⚡</span> Quick Test Scenarios (Click to Run):
+        </div>
+        <div class="presets-list">
+          <button type="button" class="preset-btn" id="preset-test-1"
+                  data-subject="Python" data-difficulty="Beginner" data-purpose="Exam Preparation">
+            1. Python • Beginner • Exam Preparation
+          </button>
+          <button type="button" class="preset-btn" id="preset-test-2"
+                  data-subject="Cloud Computing" data-difficulty="Intermediate" data-purpose="Project Development">
+            2. Cloud Computing • Intermediate • Project Dev
+          </button>
+          <button type="button" class="preset-btn" id="preset-test-3"
+                  data-subject="Artificial Intelligence" data-difficulty="Advanced" data-purpose="Interview Preparation">
+            3. Artificial Intelligence • Advanced • Interview Prep
+          </button>
+          <button type="button" class="preset-btn preset-not-found" id="preset-test-4"
+                  data-subject="Quantum Computing" data-difficulty="Beginner" data-purpose="Exam Preparation">
+            4. Non-Existent Subject (Quantum Computing)
+          </button>
+        </div>
+      </div>
+
+      <!-- Input Form -->
+      <form id="recommendation-form" class="recommendation-form" novalidate>
+        <div class="form-grid">
+          
+          <!-- Subject Input -->
+          <div class="form-group">
+            <label for="subject-input">
+              <span>📚</span> Target Subject
+            </label>
+            <input 
+              type="text" 
+              id="subject-input" 
+              name="subject" 
+              class="form-control" 
+              placeholder="e.g. Python, Cloud Computing, Artificial Intelligence..." 
+              required 
+              list="subject-suggestions"
+              autocomplete="off"
+            />
+            <datalist id="subject-suggestions"></datalist>
+
+            <span class="form-hint">Or click a popular subject:</span>
+            <div class="popular-pills">
+              <button type="button" class="subject-pill">Python</button>
+              <button type="button" class="subject-pill">Cloud Computing</button>
+              <button type="button" class="subject-pill">Artificial Intelligence</button>
+              <button type="button" class="subject-pill">Cybersecurity</button>
+              <button type="button" class="subject-pill">Database Management</button>
+              <button type="button" class="subject-pill">Software Engineering</button>
+            </div>
+          </div>
+
+          <!-- Difficulty Level -->
+          <div class="form-group">
+            <label for="difficulty-select">
+              <span>📊</span> Difficulty Level
+            </label>
+            <select id="difficulty-select" name="difficulty" class="form-control">
+              <option value="Beginner">Beginner (Foundations, Syntax, Introductory)</option>
+              <option value="Intermediate" selected>Intermediate (Applied Concepts, Architecture)</option>
+              <option value="Advanced">Advanced (Theory, Deep Internals, Systems)</option>
+            </select>
+            <span class="form-hint">Select the complexity tier matching your existing knowledge.</span>
+          </div>
+
+          <!-- Learning Purpose -->
+          <div class="form-group">
+            <label for="purpose-select">
+              <span>🎓</span> Purpose of Learning
+            </label>
+            <select id="purpose-select" name="purpose" class="form-control">
+              <option value="Exam Preparation">Exam Preparation (University / Certification Syllabi)</option>
+              <option value="Project Development" selected>Project Development (Hands-on Implementation & Coding)</option>
+              <option value="Interview Preparation">Interview Preparation (Technical Algorithms & System Design)</option>
+              <option value="Gaining Basic Knowledge">Gaining Basic Knowledge (Self-study & Conceptual Foundations)</option>
+            </select>
+            <span class="form-hint">Tell the AI why you are studying to optimize suitability weights.</span>
+          </div>
+
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button type="submit" id="btn-submit" class="btn btn-primary">
+            <span>✨</span> Find Recommended Books
+          </button>
+          <button type="button" id="btn-reset" class="btn btn-secondary">
+            <span>↺</span> Reset Search
+          </button>
+          <button type="button" id="btn-toggle-catalogue" class="btn btn-outline" style="margin-left: auto;">
+            📖 Browse Full Library Catalogue (24 Books)
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Empty State / No Match Fallback Section -->
+    <section id="empty-state-section" class="empty-state-card hidden" aria-live="polite">
+      <div class="empty-state-icon">🔍</div>
+      <h3>No Direct Matches Found for "<span id="empty-state-subject"></span>"</h3>
+      <p>
+        The requested subject is not currently present in our curated catalogue. However, our library features extensive resources in closely related computing subjects:
+      </p>
+      <div class="suggested-subjects-wrapper">
+        <div class="suggested-label">Try one of our available library collections:</div>
+        <div class="suggested-subjects-list" id="suggested-subjects">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results-section" class="results-section hidden" aria-live="polite">
+      
+      <!-- Query Summary Bar -->
+      <div class="results-summary-card" id="results-summary">
+        <!-- Dynamically populated -->
+      </div>
+
+      <!-- Top 3 Recommended Books Heading -->
+      <div class="results-heading-group">
+        <h2 class="section-title">
+          <span>🏆</span> Top Recommended Books
+        </h2>
+        <p class="section-subtitle">
+          Ranked using multi-criteria suitability scoring (Subject Relevance 50% + Difficulty Fit 25% + Purpose Alignment 25%).
+        </p>
+      </div>
+
+      <!-- Recommendations Cards Container -->
+      <div class="recommendations-grid" id="recommendations-container">
+        <!-- Dynamic Cards inserted here -->
+      </div>
+
+      <!-- Comparison Section -->
+      <div class="comparison-section" id="comparison-section">
+        <h3 class="section-title">
+          <span>📊</span> Multi-Criteria Comparison Matrix
+        </h3>
+        <p class="section-subtitle">
+          Side-by-side comparison of all candidate books retrieved for your query, ranked from most suitable to least suitable.
+        </p>
+
+        <div class="table-responsive">
+          <table class="comparison-table" id="comparison-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Book Title & Author</th>
+                <th>Subject</th>
+                <th>Difficulty</th>
+                <th>Primary Purpose</th>
+                <th>Relevance Score</th>
+                <th>Suitability Fit</th>
+                <th>Difficulty Alignment Rationale</th>
+              </tr>
+            </thead>
+            <tbody id="comparison-table-body">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Full Catalogue Explorer (Collapsible) -->
+    <section id="full-catalogue-section" class="card-panel catalogue-browser-section hidden">
+      <div class="catalogue-controls">
+        <div>
+          <h3 class="section-title">
+            <span>📚</span> Complete Library Catalogue
+          </h3>
+          <p class="section-subtitle" style="margin-bottom: 0;">
+            Inspect all 24 curated academic textbooks stored in the local catalogue repository.
+          </p>
+        </div>
+        <div class="catalogue-filter-group">
+          <input 
+            type="text" 
+            id="catalogue-search-input" 
+            class="form-control" 
+            placeholder="Search catalogue by title or keyword..." 
+            style="width: 250px;"
+          />
+          <select id="catalogue-filter-subject" class="form-control" style="width: 200px;">
+            <option value="">All Subjects</option>
+          </select>
+          <span class="catalogue-count" id="catalogue-count"></span>
+        </div>
+      </div>
+
+      <div class="full-catalogue-grid" id="full-catalogue-grid">
+        <!-- Dynamic catalogue items inserted here -->
+      </div>
+    </section>
+
+    <!-- System Architecture & Methodology Explanation -->
+    <section class="architecture-card" id="architecture-section">
+      <h3 class="section-title">
+        <span>⚙️</span> How the AI Recommendation Engine Works
+      </h3>
+      <p class="section-subtitle" style="margin-bottom: 0.5rem;">
+        This prototype uses a transparent, explainable rule-based decision engine structured around four core functionalities:
+      </p>
+
+      <div class="architecture-grid">
+        <div class="arch-pillar">
+          <div class="arch-pillar-title">
+            <span>1️⃣</span> A. Information Retrieval
+          </div>
+          <p>
+            Normalizes query tokens, expands synonyms (e.g., "AI" → Artificial Intelligence, "AWS" → Cloud Computing), and matches against subjects, titles, and curriculum keywords with up to 50 base relevance points.
+          </p>
+        </div>
+
+        <div class="arch-pillar">
+          <div class="arch-pillar-title">
+            <span>2️⃣</span> B. Filtering
+          </div>
+          <p>
+            Screens retrieved candidates against the selected difficulty tier (Beginner, Intermediate, Advanced) and learning purpose. Detects level distance gaps and applies fallback logic when no exact matches exist.
+          </p>
+        </div>
+
+        <div class="arch-pillar">
+          <div class="arch-pillar-title">
+            <span>3️⃣</span> C. Multi-Attribute Comparison
+          </div>
+          <p>
+            Scores each candidate using a 100-point formula: <code>Total = Subject (50) + Difficulty (25) + Purpose (25)</code>. Classifies books into Optimal Fit (≥88%), Strong Fit (72-87%), Moderate Fit (50-71%), and Partial Match (&lt;50%).
+          </p>
+        </div>
+
+        <div class="arch-pillar">
+          <div class="arch-pillar-title">
+            <span>4️⃣</span> D. Recommendation & Reasoning
+          </div>
+          <p>
+            Presents the top 3 books with natural-language explanations explaining precisely why each textbook fits the student's background, difficulty level, and study objective.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p><strong>AI Library Assistance Agent</strong> • Academic Project Recommender Prototype</p>
+      <p class="footer-sub">Built with pure Vanilla HTML5, CSS3, and JavaScript • 100% Client-Side Local Execution • No External APIs Required</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/books.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
